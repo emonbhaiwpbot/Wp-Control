@@ -1,4 +1,3 @@
-
 module.exports = {
 
   botName: "€м𝐨Ⓝ",
