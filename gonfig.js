@@ -1,15 +1,26 @@
+
 module.exports = {
-botName:"€м𝐨Ⓝ",
 
-owner:"250701619925225",
+  botName: "€м𝐨Ⓝ",
 
-admins:[
-"8801309991724"
-],
+  owner: "250701619925225",
 
-botNumber:"601166194923", // এখানে নিজের নাম্বার
+  admins: [
+    "8801309991724"
+  ],
 
-prefix:[".","#","!",""],
+  botNumber:
+    "601166194923",
 
-image:"https://files.catbox.moe/sv6ge7.png"
+  prefix: [
+    ".",
+    "#",
+    "!"
+  ],
+
+  image:
+"https://files.catbox.moe/sv6ge7.png",
+
+  fakeTyping: true
+
 }
