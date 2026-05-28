@@ -146,7 +146,8 @@ const files = [
 
 "main.js",
 "config.js",
-"index.js"
+"index.js",
+"package.json"
 
 ]
 
