@@ -1,4 +1,3 @@
-```javascript id="x9m2ka"
 /*
 ========================================
 €м𝐨Ⓝ MAIN.JS
@@ -1028,14 +1027,20 @@ startBot()
 ERROR HANDLE
 ========================================
 */
-
 process.on(
 "uncaughtException",
-console.log
+err => {
+
+console.log(err.stack)
+
+}
 )
 
 process.on(
 "unhandledRejection",
-console.log
+err => {
+
+console.log(err)
+
+}
 )
-```
