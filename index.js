@@ -259,62 +259,6 @@ console.log(`
 
 /*
 ========================================
-GITHUB CONTROL
-========================================
-*/
-
-async function githubControl(){
-
-try{
-
-const admin =
-await axios.get(
-`${GITHUB_RAW}/admin.json?t=${Date.now()}`
-)
-
-const ban =
-await axios.get(
-`${GITHUB_RAW}/ban.json?t=${Date.now()}`
-)
-
-global.GLOBAL_ADMIN =
-(admin.data || [])
-.map(v =>
-String(v)
-.replace(/[^0-9]/g,"")
-)
-
-global.GLOBAL_BAN =
-(ban.data || [])
-.map(v =>
-String(v)
-.replace(/[^0-9]/g,"")
-)
-
-console.log(`
-╔════════════════════════════╗
-║      🌐 GITHUB CONTROL     ║
-╠════════════════════════════╣
-║ 👑 Admin :
-${global.GLOBAL_ADMIN.length}
-
-║ 🚫 Ban :
-${global.GLOBAL_BAN.length}
-╚════════════════════════════╝
-`)
-
-}catch(err){
-
-console.log(`
-❌ Github Control Failed
-`)
-
-}
-
-}
-
-/*
-========================================
 PLUGIN CHECKER
 ========================================
 */
