@@ -1,4 +1,3 @@
 [
-  "plugins/emon/welcome.js",
-  "index.js"
+  "welcome.js"
 ]
