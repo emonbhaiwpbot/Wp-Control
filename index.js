@@ -1,7 +1,7 @@
 /*
 ========================================
 €м𝐨Ⓝ INDEX.JS
-ULTIMATE AUTO UPDATE SYSTEM
+FULL FIXED VERSION
 ========================================
 */
 
@@ -30,7 +30,6 @@ GLOBAL
 */
 
 global.GLOBAL_ADMIN = []
-
 global.GLOBAL_BAN = []
 
 /*
@@ -42,13 +41,9 @@ CREATE FOLDERS
 const folders = [
 
 "./plugins",
-
 "./plugins/emon",
-
 "./session",
-
 "./temp",
-
 "./backup"
 
 ]
@@ -91,6 +86,15 @@ try{
 const res =
 await axios.get(url)
 
+const newData =
+typeof res.data === "object"
+? JSON.stringify(
+res.data,
+null,
+2
+)
+: res.data
+
 const oldData =
 fs.existsSync(savePath)
 ? fs.readFileSync(
@@ -99,13 +103,11 @@ savePath,
 )
 : ""
 
-if(
-oldData !== res.data
-){
+if(oldData !== newData){
 
 fs.writeFileSync(
 savePath,
-res.data
+newData
 )
 
 console.log(`
@@ -134,7 +136,7 @@ return false
 
 /*
 ========================================
-AUTO UPDATE MAIN FILES
+UPDATE MAIN FILES
 ========================================
 */
 
@@ -143,11 +145,7 @@ async function updateMainFiles(){
 const files = [
 
 "main.js",
-
 "config.js",
-
-"package.json",
-
 "index.js"
 
 ]
@@ -182,7 +180,48 @@ process.exit(1)
 
 /*
 ========================================
-AUTO UPDATE EMON FILES
+UPDATE PACKAGE
+========================================
+*/
+
+async function updatePackage(){
+
+try{
+
+const res =
+await axios.get(
+`${GITHUB_RAW}/package.json?t=${Date.now()}`
+)
+
+const data =
+JSON.stringify(
+res.data,
+null,
+2
+)
+
+fs.writeFileSync(
+"./package.json",
+data
+)
+
+console.log(`
+✅ package.json Synced
+`)
+
+}catch(err){
+
+console.log(`
+❌ package.json Failed
+`)
+
+}
+
+}
+
+/*
+========================================
+UPDATE EMON FILES
 ========================================
 */
 
@@ -190,13 +229,13 @@ async function updateEmonFiles(){
 
 try{
 
-const emon =
+const res =
 await axios.get(
 `${GITHUB_RAW}/emon.json?t=${Date.now()}`
 )
 
 const files =
-emon.data || []
+res.data || []
 
 for(let file of files){
 
@@ -281,6 +320,8 @@ PLUGIN CHECKER
 
 function pluginChecker(){
 
+try{
+
 const files =
 fs.readdirSync("./plugins")
 .filter(v =>
@@ -290,6 +331,16 @@ v.endsWith(".js")
 for(let file of files){
 
 try{
+
+delete require.cache[
+require.resolve(
+path.join(
+process.cwd(),
+"./plugins",
+file
+)
+)
+]
 
 const plugin =
 require(
@@ -319,7 +370,15 @@ console.log(`
 ${file}
 `)
 
+console.log(err.stack)
+
 }
+
+}
+
+}catch(err){
+
+console.log(err)
 
 }
 
@@ -365,8 +424,6 @@ if(
 
 console.log(`
 🚫 plugins/emon Missing
-
-⚠️ BOT STOPPED
 `)
 
 process.exit(1)
@@ -377,40 +434,13 @@ process.exit(1)
 
 /*
 ========================================
-AUTO BACKUP
+TEMP CLEANER
 ========================================
 */
 
 setInterval(()=>{
 
 try{
-
-const time =
-Date.now()
-
-fs.cpSync(
-"./plugins",
-`./backup/plugins-${time}`,
-{
-recursive:true
-}
-)
-
-console.log(`
-💾 Backup Created
-`)
-
-}catch{}
-
-},3600000)
-
-/*
-========================================
-TEMP CLEANER
-========================================
-*/
-
-setInterval(()=>{
 
 const temp =
 "./temp"
@@ -436,7 +466,45 @@ console.log(`
 🗑️ Temp Cleaned
 `)
 
+}catch{}
+
 },600000)
+
+/*
+========================================
+AUTO BACKUP
+========================================
+*/
+
+setInterval(()=>{
+
+try{
+
+const backup =
+`./backup/${Date.now()}`
+
+fs.mkdirSync(
+backup,
+{
+recursive:true
+}
+)
+
+fs.cpSync(
+"./plugins",
+`${backup}/plugins`,
+{
+recursive:true
+}
+)
+
+console.log(`
+💾 Backup Created
+`)
+
+}catch{}
+
+},3600000)
 
 /*
 ========================================
@@ -451,6 +519,8 @@ console.log(`
 `)
 
 await updateMainFiles()
+
+await updatePackage()
 
 await updateEmonFiles()
 
@@ -509,8 +579,9 @@ err => {
 
 console.log(`
 ❌ Uncaught :
-${err.message}
 `)
+
+console.log(err.stack)
 
 }
 )
@@ -521,8 +592,10 @@ err => {
 
 console.log(`
 ❌ Rejection :
-${err}
 `)
+
+console.log(err)
 
 }
 )
+
